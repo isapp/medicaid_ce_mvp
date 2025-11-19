@@ -1,0 +1,37 @@
+version: "3.9"
+
+services:
+  db:
+    image: postgres:16
+    restart: unless-stopped
+    environment:
+      POSTGRES_DB: medicaid_ce
+      POSTGRES_USER: medicaid_ce
+      POSTGRES_PASSWORD: medicaid_ce_password
+    ports:
+      - "5432:5432"
+    volumes:
+      - db-data:/var/lib/postgresql/data
+
+  backend:
+    build: ./backend
+    restart: unless-stopped
+    env_file:
+      - backend/.env.local
+    environment:
+      DATABASE_URL: postgres://medicaid_ce:medicaid_ce_password@db:5432/medicaid_ce
+    depends_on:
+      - db
+    ports:
+      - "4000:4000"
+
+  frontend:
+    build: ./frontend
+    restart: unless-stopped
+    depends_on:
+      - backend
+    ports:
+      - "5173:5173"
+
+volumes:
+  db-data:
