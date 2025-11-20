@@ -45,10 +45,10 @@ beneficiariesRouter.get('/', async (req, res, next) => {
 
     if (parsed.search) {
       where.OR = [
-        { firstName: { contains: parsed.search, mode: 'insensitive' } },
-        { lastName: { contains: parsed.search, mode: 'insensitive' } },
-        { medicaidId: { contains: parsed.search, mode: 'insensitive' } },
-        { email: { contains: parsed.search, mode: 'insensitive' } },
+        { firstName: { contains: parsed.search } },
+        { lastName: { contains: parsed.search } },
+        { medicaidId: { contains: parsed.search } },
+        { email: { contains: parsed.search } },
       ];
     }
 
