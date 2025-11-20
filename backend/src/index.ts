@@ -7,7 +7,14 @@ import { apiRouter } from './routes/api';
 
 const app = express();
 
-app.use(cors());
+app.use(cors({
+  origin: [
+    'http://localhost:5173',
+    'http://localhost:3000',
+    'https://prisma-admin-app-uf2gvhc2.devinapps.com',
+  ],
+  credentials: true,
+}));
 app.use(express.json());
 
 app.get('/health', (_req, res) => {

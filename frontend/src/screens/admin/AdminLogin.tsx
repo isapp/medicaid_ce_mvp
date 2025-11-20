@@ -4,6 +4,7 @@ import { useAuth } from '../../contexts/AuthContext';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
+import { getAPIClient, APIError } from '../../api/client';
 
 export const AdminLogin: React.FC = () => {
   const navigate = useNavigate();
@@ -19,19 +20,36 @@ export const AdminLogin: React.FC = () => {
     setLoading(true);
 
     try {
-      const demoToken = 'demo-admin-token';
-      const demoUser = {
-        id: '1',
-        email: email,
-        role: 'admin' as const,
-        tenantId: 'demo-tenant',
-        name: 'Admin User',
-      };
+      const apiClient = getAPIClient();
+      const response = await apiClient.post<{
+        accessToken: string;
+        user: {
+          id: string;
+          tenantId: string;
+          role: string;
+          email: string;
+          name: string;
+        };
+      }>('/auth/admin/login', {
+        email,
+        password,
+      });
 
-      login(demoToken, demoUser);
+      login(response.accessToken, {
+        id: response.user.id,
+        email: response.user.email,
+        role: 'admin',
+        tenantId: response.user.tenantId,
+        name: response.user.name,
+      });
+      
       navigate('/admin/dashboard');
     } catch (err) {
-      setError('Invalid email or password');
+      if (err instanceof APIError) {
+        setError(err.message);
+      } else {
+        setError('Invalid email or password');
+      }
     } finally {
       setLoading(false);
     }
@@ -78,7 +96,7 @@ export const AdminLogin: React.FC = () => {
 
         <div className="login-footer">
           <p className="demo-notice">
-            Demo Mode: Use any email and password to login
+            Demo credentials: admin@demo.gov / admin123
           </p>
         </div>
       </Card>
