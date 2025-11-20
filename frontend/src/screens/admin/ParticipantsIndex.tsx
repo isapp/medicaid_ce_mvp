@@ -1,21 +1,45 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+import { useQuery } from '@tanstack/react-query';
 import { AdminShell } from '../../components/layout/AdminShell';
 import { Card } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { Search, Filter } from 'lucide-react';
-import { StatusBadge } from '../../components/admin/StatusBadge';
+import { StatusBadge, StatusType } from '../../components/admin/StatusBadge';
+import { beneficiariesService } from '../../api/services/beneficiaries';
+
+const mapEngagementStatusToStatusBadge = (engagementStatus: string): StatusType => {
+  switch (engagementStatus) {
+    case 'active':
+      return 'compliant';
+    case 'non_compliant':
+      return 'non-compliant';
+    case 'exempt':
+      return 'compliant';
+    case 'unknown':
+      return 'pending';
+    default:
+      return 'pending';
+  }
+};
 
 export const ParticipantsIndex: React.FC = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = React.useState('');
+  const [debouncedSearch, setDebouncedSearch] = React.useState('');
 
-  const mockParticipants = [
-    { id: '1', name: 'John Doe', medicaidId: 'MED-001', status: 'compliant', lastActivity: '2 days ago' },
-    { id: '2', name: 'Jane Smith', medicaidId: 'MED-002', status: 'at-risk', lastActivity: '1 week ago' },
-    { id: '3', name: 'Bob Johnson', medicaidId: 'MED-003', status: 'compliant', lastActivity: '1 day ago' },
-  ];
+  React.useEffect(() => {
+    const timer = setTimeout(() => {
+      setDebouncedSearch(searchQuery);
+    }, 300);
+    return () => clearTimeout(timer);
+  }, [searchQuery]);
+
+  const { data, isLoading, error } = useQuery({
+    queryKey: ['beneficiaries', { search: debouncedSearch }],
+    queryFn: () => beneficiariesService.list({ search: debouncedSearch || undefined }),
+  });
 
   return (
     <AdminShell>
@@ -44,34 +68,63 @@ export const ParticipantsIndex: React.FC = () => {
         </Card>
 
         <Card className="participants-table">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Name</th>
-                <th>Medicaid ID</th>
-                <th>Status</th>
-                <th>Last Activity</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {mockParticipants.map((participant) => (
-                <tr key={participant.id}>
-                  <td>{participant.name}</td>
-                  <td>{participant.medicaidId}</td>
-                  <td>
-                    <StatusBadge status={participant.status as any} />
-                  </td>
-                  <td>{participant.lastActivity}</td>
-                  <td>
-                    <Button variant="secondary" onClick={() => navigate(`/admin/participants/${participant.id}`)}>
-                      View
-                    </Button>
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </table>
+          {isLoading && (
+            <div style={{ padding: '2rem', textAlign: 'center' }}>
+              Loading participants...
+            </div>
+          )}
+          
+          {error && (
+            <div style={{ padding: '2rem', textAlign: 'center', color: 'red' }}>
+              Error loading participants: {error instanceof Error ? error.message : 'Unknown error'}
+            </div>
+          )}
+          
+          {data && (
+            <>
+              <table className="data-table">
+                <thead>
+                  <tr>
+                    <th>Name</th>
+                    <th>Medicaid ID</th>
+                    <th>Status</th>
+                    <th>Phone</th>
+                    <th>Actions</th>
+                  </tr>
+                </thead>
+                <tbody>
+                  {data.items.length === 0 ? (
+                    <tr>
+                      <td colSpan={5} style={{ textAlign: 'center', padding: '2rem' }}>
+                        No participants found
+                      </td>
+                    </tr>
+                  ) : (
+                    data.items.map((beneficiary) => (
+                      <tr key={beneficiary.id}>
+                        <td>{beneficiary.firstName} {beneficiary.lastName}</td>
+                        <td>{beneficiary.medicaidId}</td>
+                        <td>
+                          <StatusBadge status={mapEngagementStatusToStatusBadge(beneficiary.engagementStatus)} />
+                        </td>
+                        <td>{beneficiary.phone || 'N/A'}</td>
+                        <td>
+                          <Button variant="secondary" onClick={() => navigate(`/admin/participants/${beneficiary.id}`)}>
+                            View
+                          </Button>
+                        </td>
+                      </tr>
+                    ))
+                  )}
+                </tbody>
+              </table>
+              {data.total > 0 && (
+                <div style={{ padding: '1rem', textAlign: 'center', borderTop: '1px solid var(--color-border)' }}>
+                  Showing {data.items.length} of {data.total} participants
+                </div>
+              )}
+            </>
+          )}
         </Card>
       </div>
     </AdminShell>
