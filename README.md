@@ -39,18 +39,3 @@ The project is structured as a **React + TypeScript** frontend and a **Node.js +
    npm run dev
    ```
 
-## Initial Git Setup
-
-To turn this into a GitHub repo:
-
-```bash
-cd medicaid_ce_repo   # adjust to your extracted folder name
-git init
-git add .
-git commit -m "Initial commit: Medicaid Community Engagement POC scaffold"
-git branch -M main
-git remote add origin git@github.com:<your-org>/<your-repo>.git
-git push -u origin main
-```
-
-After that, you can point Devin at this repo and use the docs in `docs/` as its guardrails.
