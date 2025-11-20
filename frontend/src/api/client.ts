@@ -53,6 +53,32 @@ class APIClient {
         body: body ? JSON.stringify(body) : undefined,
       });
 
+      if (!response.ok) {
+        if (response.status === 401) {
+          throw new APIError(
+            'UNAUTHORIZED',
+            'Authentication required. Please log in.',
+            response.status
+          );
+        }
+        if (response.status === 403) {
+          throw new APIError(
+            'FORBIDDEN',
+            'Access denied.',
+            response.status
+          );
+        }
+      }
+
+      const contentType = response.headers.get('content-type');
+      if (!contentType || !contentType.includes('application/json')) {
+        throw new APIError(
+          'INVALID_RESPONSE',
+          `Expected JSON response but got ${contentType || 'unknown content type'}`,
+          response.status
+        );
+      }
+
       const data: APIResponse<T> = await response.json();
 
       if (data.error) {
@@ -115,12 +141,23 @@ class APIClient {
   }
 }
 
-const API_BASE_URL = import.meta.env.VITE_API_BASE_URL || 'http://localhost:3000/api/v1';
+function resolveApiBase(): string {
+  const env = import.meta.env.VITE_API_BASE_URL?.trim();
+  if (env) {
+    try {
+      const url = new URL(env, window.location.origin);
+      return url.origin + url.pathname.replace(/\/+$/, '');
+    } catch {
+    }
+  }
+  return `${window.location.origin}/api/v1`;
+}
 
 let apiClient: APIClient;
 
 export const initializeAPIClient = (getAuthToken: () => string | null) => {
-  apiClient = new APIClient(API_BASE_URL, getAuthToken);
+  const baseURL = resolveApiBase();
+  apiClient = new APIClient(baseURL, getAuthToken);
   return apiClient;
 };
 
