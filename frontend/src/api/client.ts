@@ -28,14 +28,29 @@ export class APIError extends Error {
 class APIClient {
   private baseURL: string;
   private getAuthToken: () => string | null;
+  private basicAuth: string | null = null;
 
   constructor(baseURL: string, getAuthToken: () => string | null) {
-    this.baseURL = baseURL;
+    try {
+      const urlObj = new URL(baseURL);
+      if (urlObj.username && urlObj.password) {
+        this.basicAuth = btoa(`${urlObj.username}:${urlObj.password}`);
+        this.baseURL = `${urlObj.protocol}//${urlObj.host}${urlObj.pathname}`;
+      } else {
+        this.baseURL = baseURL;
+      }
+    } catch {
+      this.baseURL = baseURL;
+    }
     this.getAuthToken = getAuthToken;
   }
 
   private async request<T>(endpoint: string, options: RequestOptions = {}): Promise<T> {
     const { method = 'GET', body, headers = {} } = options;
+
+    if (this.basicAuth) {
+      headers['Authorization'] = `Basic ${this.basicAuth}`;
+    }
 
     const token = this.getAuthToken();
     if (token) {
