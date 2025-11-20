@@ -17,9 +17,9 @@ import { ReportingDashboard } from './screens/admin/ReportingDashboard';
 import { SettingsScreen } from './screens/admin/SettingsScreen';
 import { StarredScreen } from './screens/admin/StarredScreen';
 import { VolunteerNetworkScreen } from './screens/admin/VolunteerNetworkScreen';
-
-const MemberAuth = () => <div className="screen"><h1>Member Auth</h1></div>;
-const MemberDashboard = () => <div className="screen"><h1>Member Dashboard</h1></div>;
+import { MemberAuth } from './screens/member/MemberAuth';
+import { MemberAuthVerify } from './screens/member/MemberAuthVerify';
+import { MemberDashboard } from './screens/member/MemberDashboard';
 
 const RequireAuth: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -137,11 +137,44 @@ const AppContent: React.FC = () => {
       />
       
       <Route path="/m" element={<MemberAuth />} />
+      <Route path="/m/auth/verify" element={<MemberAuthVerify />} />
       <Route 
         path="/m/dashboard" 
         element={
           <RequireAuth>
             <MemberDashboard />
+          </RequireAuth>
+        } 
+      />
+      <Route 
+        path="/m/work" 
+        element={
+          <RequireAuth>
+            <div className="screen"><h1>Employment Verification</h1></div>
+          </RequireAuth>
+        } 
+      />
+      <Route 
+        path="/m/education" 
+        element={
+          <RequireAuth>
+            <div className="screen"><h1>Education Verification</h1></div>
+          </RequireAuth>
+        } 
+      />
+      <Route 
+        path="/m/volunteer" 
+        element={
+          <RequireAuth>
+            <div className="screen"><h1>Community Service</h1></div>
+          </RequireAuth>
+        } 
+      />
+      <Route 
+        path="/m/exemptions" 
+        element={
+          <RequireAuth>
+            <div className="screen"><h1>Request Exemption</h1></div>
           </RequireAuth>
         } 
       />
