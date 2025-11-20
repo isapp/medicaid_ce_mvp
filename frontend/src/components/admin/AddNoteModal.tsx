@@ -1,5 +1,5 @@
 import React from 'react';
-import { Dialog } from '../ui/Dialog';
+import { Dialog, DialogContent, DialogClose } from '../ui/Dialog';
 import { Button } from '../ui/Button';
 import { X } from 'lucide-react';
 
@@ -26,47 +26,51 @@ export const AddNoteModal: React.FC<AddNoteModalProps> = ({
     }
   };
 
-  const handleCancel = () => {
-    setNoteText('');
-    onClose();
+  const handleOpenChange = (open: boolean) => {
+    if (!open) {
+      setNoteText('');
+      onClose();
+    }
   };
 
   return (
-    <Dialog open={isOpen} onOpenChange={onClose}>
-      <div className="modal-overlay" onClick={handleCancel}>
-        <div className="modal-content add-note-modal" onClick={(e) => e.stopPropagation()}>
-          <div className="modal-header">
-            <h2>{title}</h2>
-            <button className="modal-close-button" onClick={handleCancel}>
+    <Dialog open={isOpen} onOpenChange={handleOpenChange}>
+      <DialogContent className="add-note-modal">
+        <div className="modal-header">
+          <h2>{title}</h2>
+          <DialogClose asChild>
+            <button className="modal-close-button">
               <X size={20} />
             </button>
-          </div>
+          </DialogClose>
+        </div>
 
-          <div className="modal-body">
-            <div className="form-group">
-              <label htmlFor="note-text">Note</label>
-              <textarea
-                id="note-text"
-                className="form-textarea"
-                rows={6}
-                value={noteText}
-                onChange={(e) => setNoteText(e.target.value)}
-                placeholder="Enter your note here..."
-                autoFocus
-              />
-            </div>
-          </div>
-
-          <div className="modal-footer">
-            <Button variant="secondary" onClick={handleCancel}>
-              Cancel
-            </Button>
-            <Button onClick={handleSave} disabled={!noteText.trim()}>
-              Save Note
-            </Button>
+        <div className="modal-body">
+          <div className="form-group">
+            <label htmlFor="note-text">Note</label>
+            <textarea
+              id="note-text"
+              className="form-textarea"
+              rows={6}
+              value={noteText}
+              onChange={(e) => setNoteText(e.target.value)}
+              placeholder="Enter your note here..."
+              autoFocus
+            />
           </div>
         </div>
-      </div>
+
+        <div className="modal-footer">
+          <DialogClose asChild>
+            <Button variant="secondary">
+              Cancel
+            </Button>
+          </DialogClose>
+          <Button onClick={handleSave} disabled={!noteText.trim()}>
+            Save Note
+          </Button>
+        </div>
+      </DialogContent>
     </Dialog>
   );
 };
