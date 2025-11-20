@@ -5,9 +5,14 @@ import { ThemeProvider } from './theme/ThemeProvider';
 import { AuthProvider, useAuth } from './contexts/AuthContext';
 import { queryClient } from './lib/queryClient';
 import { initializeAPIClient } from './api/client';
+import { AdminLogin } from './screens/admin/AdminLogin';
+import { AdminDashboard } from './screens/admin/AdminDashboard';
+import { ParticipantsIndex } from './screens/admin/ParticipantsIndex';
+import { CasesIndex } from './screens/admin/CasesIndex';
+import { BroadcastsIndex } from './screens/admin/BroadcastsIndex';
+import { ReportingDashboard } from './screens/admin/ReportingDashboard';
+import { SettingsScreen } from './screens/admin/SettingsScreen';
 
-const AdminLogin = () => <div className="screen"><h1>Admin Login</h1></div>;
-const AdminDashboard = () => <div className="screen"><h1>Admin Dashboard</h1></div>;
 const MemberAuth = () => <div className="screen"><h1>Member Auth</h1></div>;
 const MemberDashboard = () => <div className="screen"><h1>Member Dashboard</h1></div>;
 
@@ -42,6 +47,62 @@ const AppContent: React.FC = () => {
         element={
           <RequireAuth>
             <AdminDashboard />
+          </RequireAuth>
+        } 
+      />
+      <Route 
+        path="/admin/participants" 
+        element={
+          <RequireAuth>
+            <ParticipantsIndex />
+          </RequireAuth>
+        } 
+      />
+      <Route 
+        path="/admin/cases" 
+        element={
+          <RequireAuth>
+            <CasesIndex />
+          </RequireAuth>
+        } 
+      />
+      <Route 
+        path="/admin/broadcasts" 
+        element={
+          <RequireAuth>
+            <BroadcastsIndex />
+          </RequireAuth>
+        } 
+      />
+      <Route 
+        path="/admin/reporting" 
+        element={
+          <RequireAuth>
+            <ReportingDashboard />
+          </RequireAuth>
+        } 
+      />
+      <Route 
+        path="/admin/settings" 
+        element={
+          <RequireAuth>
+            <SettingsScreen />
+          </RequireAuth>
+        } 
+      />
+      <Route 
+        path="/admin/starred" 
+        element={
+          <RequireAuth>
+            <div className="screen"><h1>Starred Participants</h1></div>
+          </RequireAuth>
+        } 
+      />
+      <Route 
+        path="/admin/volunteer-network" 
+        element={
+          <RequireAuth>
+            <div className="screen"><h1>Volunteer Network</h1></div>
           </RequireAuth>
         } 
       />
