@@ -4,14 +4,45 @@ import { ScreenLayout } from '../../components/layout/ScreenLayout';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
 import { Card } from '../../components/ui/Card';
+import { getAPIClient, APIError } from '../../api/client';
 
 export const MemberAuth: React.FC = () => {
   const navigate = useNavigate();
   const [phoneNumber, setPhoneNumber] = React.useState('');
+  const [isLoading, setIsLoading] = React.useState(false);
+  const [error, setError] = React.useState<string | null>(null);
+  const [demoCode, setDemoCode] = React.useState<string | null>(null);
 
-  const handleSubmit = (e: React.FormEvent) => {
+  const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    navigate('/m/auth/verify');
+    setError(null);
+    setIsLoading(true);
+    setDemoCode(null);
+
+    try {
+      const normalizedPhone = phoneNumber.replace(/\D/g, '');
+      const apiClient = getAPIClient();
+      const response = await apiClient.post<{ message: string; demoCode?: string }>(
+        '/auth/member/request-code',
+        { phone: normalizedPhone }
+      );
+
+      localStorage.setItem('member_phone', normalizedPhone);
+      
+      if (response.demoCode) {
+        setDemoCode(response.demoCode);
+      }
+      
+      navigate('/m/auth/verify', { state: { demoCode: response.demoCode } });
+    } catch (err) {
+      if (err instanceof APIError) {
+        setError(err.message);
+      } else {
+        setError('Failed to send verification code. Please try again.');
+      }
+    } finally {
+      setIsLoading(false);
+    }
   };
 
   const formatPhoneNumber = (value: string) => {
@@ -52,10 +83,16 @@ export const MemberAuth: React.FC = () => {
               <p className="form-help">
                 We'll send you a verification code via SMS
               </p>
+              {error && <p className="form-error" style={{ color: 'red', marginTop: '8px' }}>{error}</p>}
+              {demoCode && (
+                <p className="form-help" style={{ color: 'green', marginTop: '8px', fontWeight: 'bold' }}>
+                  Demo Code: {demoCode}
+                </p>
+              )}
             </div>
 
-            <Button type="submit" variant="primary" disabled={phoneNumber.length < 12}>
-              Continue
+            <Button type="submit" variant="primary" disabled={phoneNumber.length < 12 || isLoading}>
+              {isLoading ? 'Sending...' : 'Continue'}
             </Button>
           </form>
         </Card>

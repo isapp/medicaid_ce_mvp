@@ -61,3 +61,17 @@ model Beneficiary {
   @@index([tenantId])
   @@index([tenantId, engagementStatus])
 }
+
+// Verification codes for member SMS authentication
+model VerificationCode {
+  id         String    @id @default(uuid())
+  phone      String    // normalized phone number (digits only)
+  code       String    // 6-digit OTP code
+  expiresAt  DateTime
+  attempts   Int       @default(0)
+  consumedAt DateTime?
+  createdAt  DateTime  @default(now())
+  tenantId   String?
+
+  @@index([phone])
+}
