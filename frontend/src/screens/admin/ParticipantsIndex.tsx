@@ -1,4 +1,5 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AdminShell } from '../../components/layout/AdminShell';
 import { Card } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
@@ -7,6 +8,7 @@ import { Badge } from '../../components/ui/Badge';
 import { Search, Filter } from 'lucide-react';
 
 export const ParticipantsIndex: React.FC = () => {
+  const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = React.useState('');
 
   const mockParticipants = [
@@ -64,7 +66,9 @@ export const ParticipantsIndex: React.FC = () => {
                   </td>
                   <td>{participant.lastActivity}</td>
                   <td>
-                    <Button variant="secondary">View</Button>
+                    <Button variant="secondary" onClick={() => navigate(`/admin/participants/${participant.id}`)}>
+                      View
+                    </Button>
                   </td>
                 </tr>
               ))}
