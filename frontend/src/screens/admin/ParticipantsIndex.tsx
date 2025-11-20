@@ -4,8 +4,8 @@ import { AdminShell } from '../../components/layout/AdminShell';
 import { Card } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
-import { Badge } from '../../components/ui/Badge';
 import { Search, Filter } from 'lucide-react';
+import { StatusBadge } from '../../components/admin/StatusBadge';
 
 export const ParticipantsIndex: React.FC = () => {
   const navigate = useNavigate();
@@ -60,9 +60,7 @@ export const ParticipantsIndex: React.FC = () => {
                   <td>{participant.name}</td>
                   <td>{participant.medicaidId}</td>
                   <td>
-                    <Badge variant={participant.status === 'compliant' ? 'success' : 'warning'}>
-                      {participant.status}
-                    </Badge>
+                    <StatusBadge status={participant.status as any} />
                   </td>
                   <td>{participant.lastActivity}</td>
                   <td>

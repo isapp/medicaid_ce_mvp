@@ -2,14 +2,20 @@ import React from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { AdminShell } from '../../components/layout/AdminShell';
 import { Card } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
-import { ArrowLeft, Star, Mail, Phone, Calendar, FileText } from 'lucide-react';
+import { ArrowLeft, Mail, Phone, Calendar, FileText } from 'lucide-react';
+import { StatusBadge } from '../../components/admin/StatusBadge';
+import { StarButton } from '../../components/admin/StarButton';
+import { AddNoteModal } from '../../components/admin/AddNoteModal';
+import { DocumentViewerModal } from '../../components/admin/DocumentViewerModal';
 
 export const ParticipantDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
   const [isStarred, setIsStarred] = React.useState(false);
+  const [isAddNoteModalOpen, setIsAddNoteModalOpen] = React.useState(false);
+  const [isDocViewerOpen, setIsDocViewerOpen] = React.useState(false);
+  const [selectedDocument, setSelectedDocument] = React.useState<{ name: string; url: string; type: string } | null>(null);
 
   const mockParticipant = {
     id: id || '1',
@@ -33,10 +39,19 @@ export const ParticipantDetail: React.FC = () => {
   ];
 
   const mockDocuments = [
-    { id: '1', name: 'Paystub_Nov_2025.pdf', uploadDate: '11/18/2025', type: 'Employment Verification' },
-    { id: '2', name: 'ID_Verification.pdf', uploadDate: '11/01/2025', type: 'Identity Document' },
-    { id: '3', name: 'Exemption_Request.pdf', uploadDate: '10/15/2025', type: 'Exemption' },
+    { id: '1', name: 'Paystub_Nov_2025.pdf', uploadDate: '11/18/2025', type: 'Employment Verification', url: '/mock/paystub.pdf', mimeType: 'application/pdf' },
+    { id: '2', name: 'ID_Verification.pdf', uploadDate: '11/01/2025', type: 'Identity Document', url: '/mock/id.pdf', mimeType: 'application/pdf' },
+    { id: '3', name: 'Exemption_Request.pdf', uploadDate: '10/15/2025', type: 'Exemption', url: '/mock/exemption.pdf', mimeType: 'application/pdf' },
   ];
+
+  const handleAddNote = (note: string) => {
+    console.log('Adding note:', note);
+  };
+
+  const handleViewDocument = (doc: typeof mockDocuments[0]) => {
+    setSelectedDocument({ name: doc.name, url: doc.url, type: doc.mimeType });
+    setIsDocViewerOpen(true);
+  };
 
   return (
     <AdminShell>
@@ -47,13 +62,7 @@ export const ParticipantDetail: React.FC = () => {
             <span>Back to Participants</span>
           </Button>
           <div className="detail-header-actions">
-            <Button
-              variant={isStarred ? 'primary' : 'secondary'}
-              onClick={() => setIsStarred(!isStarred)}
-            >
-              <Star size={16} fill={isStarred ? 'currentColor' : 'none'} />
-              <span>{isStarred ? 'Starred' : 'Star'}</span>
-            </Button>
+            <StarButton isStarred={isStarred} onToggle={() => setIsStarred(!isStarred)} />
             <Button variant="secondary">
               <Mail size={16} />
               <span>Send Message</span>
@@ -69,9 +78,7 @@ export const ParticipantDetail: React.FC = () => {
                   <h1>{mockParticipant.name}</h1>
                   <p className="participant-medicaid-id">{mockParticipant.medicaidId}</p>
                 </div>
-                <Badge variant={mockParticipant.status === 'compliant' ? 'success' : 'warning'}>
-                  {mockParticipant.status}
-                </Badge>
+                <StatusBadge status={mockParticipant.status as any} />
               </div>
 
               <div className="participant-info-grid">
@@ -131,7 +138,9 @@ export const ParticipantDetail: React.FC = () => {
             <Card className="notes-card">
               <div className="card-header">
                 <h2>Notes</h2>
-                <Button variant="primary">Add Note</Button>
+                <Button variant="primary" onClick={() => setIsAddNoteModalOpen(true)}>
+                  Add Note
+                </Button>
               </div>
               <div className="notes-list">
                 {mockNotes.map((note) => (
@@ -163,13 +172,34 @@ export const ParticipantDetail: React.FC = () => {
                         <span className="document-date">{doc.uploadDate}</span>
                       </div>
                     </div>
-                    <Button variant="secondary">View</Button>
+                    <Button variant="secondary" onClick={() => handleViewDocument(doc)}>
+                      View
+                    </Button>
                   </div>
                 ))}
               </div>
             </Card>
           </div>
         </div>
+
+        <AddNoteModal
+          isOpen={isAddNoteModalOpen}
+          onClose={() => setIsAddNoteModalOpen(false)}
+          onSave={handleAddNote}
+        />
+
+        {selectedDocument && (
+          <DocumentViewerModal
+            isOpen={isDocViewerOpen}
+            onClose={() => {
+              setIsDocViewerOpen(false);
+              setSelectedDocument(null);
+            }}
+            documentName={selectedDocument.name}
+            documentUrl={selectedDocument.url}
+            documentType={selectedDocument.type}
+          />
+        )}
       </div>
     </AdminShell>
   );
