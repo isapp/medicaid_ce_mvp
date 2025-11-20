@@ -5,10 +5,13 @@ import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { ArrowLeft, User, Clock, AlertCircle } from 'lucide-react';
+import { StatusBadge } from '../../components/admin/StatusBadge';
+import { AddNoteModal } from '../../components/admin/AddNoteModal';
 
 export const CaseDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [isAddNoteModalOpen, setIsAddNoteModalOpen] = React.useState(false);
 
   const mockCase = {
     id: id || '1',
@@ -36,6 +39,10 @@ export const CaseDetail: React.FC = () => {
     { id: '4', label: 'Close Case', variant: 'secondary' as const },
   ];
 
+  const handleAddNote = (note: string) => {
+    console.log('Adding case note:', note);
+  };
+
   return (
     <AdminShell>
       <div className="case-detail">
@@ -55,9 +62,7 @@ export const CaseDetail: React.FC = () => {
                   <p className="case-type">{mockCase.type}</p>
                 </div>
                 <div className="case-badges">
-                  <Badge variant={mockCase.status === 'open' ? 'warning' : 'default'}>
-                    {mockCase.status}
-                  </Badge>
+                  <StatusBadge status={mockCase.status as any} />
                   <Badge variant={mockCase.priority === 'high' ? 'destructive' : mockCase.priority === 'medium' ? 'warning' : 'default'}>
                     {mockCase.priority} priority
                   </Badge>
@@ -117,7 +122,9 @@ export const CaseDetail: React.FC = () => {
             <Card className="case-notes-card">
               <div className="card-header">
                 <h2>Case Notes</h2>
-                <Button variant="primary">Add Note</Button>
+                <Button variant="primary" onClick={() => setIsAddNoteModalOpen(true)}>
+                  Add Note
+                </Button>
               </div>
               <div className="notes-list">
                 {mockNotes.map((note) => (
@@ -165,6 +172,13 @@ export const CaseDetail: React.FC = () => {
             </Card>
           </div>
         </div>
+
+        <AddNoteModal
+          isOpen={isAddNoteModalOpen}
+          onClose={() => setIsAddNoteModalOpen(false)}
+          onSave={handleAddNote}
+          title="Add Case Note"
+        />
       </div>
     </AdminShell>
   );
