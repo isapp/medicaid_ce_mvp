@@ -8,8 +8,11 @@ import { initializeAPIClient } from './api/client';
 import { AdminLogin } from './screens/admin/AdminLogin';
 import { AdminDashboard } from './screens/admin/AdminDashboard';
 import { ParticipantsIndex } from './screens/admin/ParticipantsIndex';
+import { ParticipantDetail } from './screens/admin/ParticipantDetail';
 import { CasesIndex } from './screens/admin/CasesIndex';
+import { CaseDetail } from './screens/admin/CaseDetail';
 import { BroadcastsIndex } from './screens/admin/BroadcastsIndex';
+import { BroadcastNew } from './screens/admin/BroadcastNew';
 import { ReportingDashboard } from './screens/admin/ReportingDashboard';
 import { SettingsScreen } from './screens/admin/SettingsScreen';
 
@@ -59,6 +62,14 @@ const AppContent: React.FC = () => {
         } 
       />
       <Route 
+        path="/admin/participants/:id" 
+        element={
+          <RequireAuth>
+            <ParticipantDetail />
+          </RequireAuth>
+        } 
+      />
+      <Route 
         path="/admin/cases" 
         element={
           <RequireAuth>
@@ -67,10 +78,26 @@ const AppContent: React.FC = () => {
         } 
       />
       <Route 
+        path="/admin/cases/:id" 
+        element={
+          <RequireAuth>
+            <CaseDetail />
+          </RequireAuth>
+        } 
+      />
+      <Route 
         path="/admin/broadcasts" 
         element={
           <RequireAuth>
             <BroadcastsIndex />
+          </RequireAuth>
+        } 
+      />
+      <Route 
+        path="/admin/broadcasts/new" 
+        element={
+          <RequireAuth>
+            <BroadcastNew />
           </RequireAuth>
         } 
       />
