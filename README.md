@@ -1,7 +1,5 @@
 # Medicaid Community Engagement POC
 
-This is a GitHub-ready starter repository for a **Medicaid Community Engagement** SaaS POC, designed to be built with the help of AI tools like Devin.
-
 The project is structured as a **React + TypeScript** frontend and a **Node.js + TypeScript** backend, with a Postgres database and a dedicated integrations layer for third-party providers (employment verification, messaging, etc.).
 
 ## Monorepo Layout
