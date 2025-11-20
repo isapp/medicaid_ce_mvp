@@ -15,6 +15,8 @@ import { BroadcastsIndex } from './screens/admin/BroadcastsIndex';
 import { BroadcastNew } from './screens/admin/BroadcastNew';
 import { ReportingDashboard } from './screens/admin/ReportingDashboard';
 import { SettingsScreen } from './screens/admin/SettingsScreen';
+import { StarredScreen } from './screens/admin/StarredScreen';
+import { VolunteerNetworkScreen } from './screens/admin/VolunteerNetworkScreen';
 
 const MemberAuth = () => <div className="screen"><h1>Member Auth</h1></div>;
 const MemberDashboard = () => <div className="screen"><h1>Member Dashboard</h1></div>;
@@ -121,7 +123,7 @@ const AppContent: React.FC = () => {
         path="/admin/starred" 
         element={
           <RequireAuth>
-            <div className="screen"><h1>Starred Participants</h1></div>
+            <StarredScreen />
           </RequireAuth>
         } 
       />
@@ -129,7 +131,7 @@ const AppContent: React.FC = () => {
         path="/admin/volunteer-network" 
         element={
           <RequireAuth>
-            <div className="screen"><h1>Volunteer Network</h1></div>
+            <VolunteerNetworkScreen />
           </RequireAuth>
         } 
       />

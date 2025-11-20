@@ -2,9 +2,9 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import { AdminShell } from '../../components/layout/AdminShell';
 import { Card } from '../../components/ui/Card';
-import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { Plus } from 'lucide-react';
+import { StatusBadge } from '../../components/admin/StatusBadge';
 
 export const BroadcastsIndex: React.FC = () => {
   const navigate = useNavigate();
@@ -46,15 +46,7 @@ export const BroadcastsIndex: React.FC = () => {
                   <td>{broadcast.title}</td>
                   <td>{broadcast.recipients}</td>
                   <td>
-                    <Badge 
-                      variant={
-                        broadcast.status === 'sent' ? 'success' : 
-                        broadcast.status === 'scheduled' ? 'warning' : 
-                        'default'
-                      }
-                    >
-                      {broadcast.status}
-                    </Badge>
+                    <StatusBadge status={broadcast.status as any} />
                   </td>
                   <td>{broadcast.sentAt}</td>
                   <td>
