@@ -1,10 +1,13 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { AdminShell } from '../../components/layout/AdminShell';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 
 export const CasesIndex: React.FC = () => {
+  const navigate = useNavigate();
+  
   const mockCases = [
     { id: '1', participant: 'John Doe', type: 'Verification Issue', status: 'open', priority: 'high', created: '2 days ago' },
     { id: '2', participant: 'Jane Smith', type: 'Exemption Request', status: 'in-progress', priority: 'medium', created: '1 week ago' },
@@ -50,7 +53,9 @@ export const CasesIndex: React.FC = () => {
                   </td>
                   <td>{caseItem.created}</td>
                   <td>
-                    <Button variant="secondary">View</Button>
+                    <Button variant="secondary" onClick={() => navigate(`/admin/cases/${caseItem.id}`)}>
+                      View
+                    </Button>
                   </td>
                 </tr>
               ))}
