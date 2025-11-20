@@ -8,13 +8,18 @@ import { initializeAPIClient } from './api/client';
 import { AdminLogin } from './screens/admin/AdminLogin';
 import { AdminDashboard } from './screens/admin/AdminDashboard';
 import { ParticipantsIndex } from './screens/admin/ParticipantsIndex';
+import { ParticipantDetail } from './screens/admin/ParticipantDetail';
 import { CasesIndex } from './screens/admin/CasesIndex';
+import { CaseDetail } from './screens/admin/CaseDetail';
 import { BroadcastsIndex } from './screens/admin/BroadcastsIndex';
+import { BroadcastNew } from './screens/admin/BroadcastNew';
 import { ReportingDashboard } from './screens/admin/ReportingDashboard';
 import { SettingsScreen } from './screens/admin/SettingsScreen';
-
-const MemberAuth = () => <div className="screen"><h1>Member Auth</h1></div>;
-const MemberDashboard = () => <div className="screen"><h1>Member Dashboard</h1></div>;
+import { StarredScreen } from './screens/admin/StarredScreen';
+import { VolunteerNetworkScreen } from './screens/admin/VolunteerNetworkScreen';
+import { MemberAuth } from './screens/member/MemberAuth';
+import { MemberAuthVerify } from './screens/member/MemberAuthVerify';
+import { MemberDashboard } from './screens/member/MemberDashboard';
 
 const RequireAuth: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -59,6 +64,14 @@ const AppContent: React.FC = () => {
         } 
       />
       <Route 
+        path="/admin/participants/:id" 
+        element={
+          <RequireAuth>
+            <ParticipantDetail />
+          </RequireAuth>
+        } 
+      />
+      <Route 
         path="/admin/cases" 
         element={
           <RequireAuth>
@@ -67,10 +80,26 @@ const AppContent: React.FC = () => {
         } 
       />
       <Route 
+        path="/admin/cases/:id" 
+        element={
+          <RequireAuth>
+            <CaseDetail />
+          </RequireAuth>
+        } 
+      />
+      <Route 
         path="/admin/broadcasts" 
         element={
           <RequireAuth>
             <BroadcastsIndex />
+          </RequireAuth>
+        } 
+      />
+      <Route 
+        path="/admin/broadcasts/new" 
+        element={
+          <RequireAuth>
+            <BroadcastNew />
           </RequireAuth>
         } 
       />
@@ -94,7 +123,7 @@ const AppContent: React.FC = () => {
         path="/admin/starred" 
         element={
           <RequireAuth>
-            <div className="screen"><h1>Starred Participants</h1></div>
+            <StarredScreen />
           </RequireAuth>
         } 
       />
@@ -102,17 +131,50 @@ const AppContent: React.FC = () => {
         path="/admin/volunteer-network" 
         element={
           <RequireAuth>
-            <div className="screen"><h1>Volunteer Network</h1></div>
+            <VolunteerNetworkScreen />
           </RequireAuth>
         } 
       />
       
       <Route path="/m" element={<MemberAuth />} />
+      <Route path="/m/auth/verify" element={<MemberAuthVerify />} />
       <Route 
         path="/m/dashboard" 
         element={
           <RequireAuth>
             <MemberDashboard />
+          </RequireAuth>
+        } 
+      />
+      <Route 
+        path="/m/work" 
+        element={
+          <RequireAuth>
+            <div className="screen"><h1>Employment Verification</h1></div>
+          </RequireAuth>
+        } 
+      />
+      <Route 
+        path="/m/education" 
+        element={
+          <RequireAuth>
+            <div className="screen"><h1>Education Verification</h1></div>
+          </RequireAuth>
+        } 
+      />
+      <Route 
+        path="/m/volunteer" 
+        element={
+          <RequireAuth>
+            <div className="screen"><h1>Community Service</h1></div>
+          </RequireAuth>
+        } 
+      />
+      <Route 
+        path="/m/exemptions" 
+        element={
+          <RequireAuth>
+            <div className="screen"><h1>Request Exemption</h1></div>
           </RequireAuth>
         } 
       />
