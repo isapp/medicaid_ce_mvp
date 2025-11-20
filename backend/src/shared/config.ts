@@ -12,6 +12,6 @@ function requireEnv(name: string): string {
 
 export const config = {
   port: parseInt(process.env.PORT || '4000', 10),
-  databaseUrl: requireEnv('DATABASE_URL'),
-  jwtSecret: requireEnv('JWT_SECRET')
+  databaseUrl: process.env.DATABASE_URL || 'file:./prisma/dev.db',
+  jwtSecret: process.env.JWT_SECRET || 'dev-secret-change-in-production'
 };
