@@ -41,7 +41,7 @@ authRouter.post('/admin/login', async (req, res, next) => {
       userId: user.id,
       tenantId: user.tenantId,
       role: user.role,
-      email: user.email || undefined,
+      email: user.email || '',
     });
 
     res.json({

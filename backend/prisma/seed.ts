@@ -1,162 +1,151 @@
 import { PrismaClient } from '@prisma/client';
-import * as bcrypt from 'bcryptjs';
+import bcrypt from 'bcryptjs';
 
 const prisma = new PrismaClient();
 
 async function main() {
-  console.log('Starting database seed...');
+  console.log('🌱 Starting database seed...');
 
-  const tenant = await prisma.tenant.upsert({
-    where: { slug: 'demo-state' },
+  // Create demo tenant
+  const demoTenant = await prisma.tenant.upsert({
+    where: { slug: 'demo' },
     update: {},
     create: {
-      name: 'Demo State Agency',
-      slug: 'demo-state',
+      name: 'Demo Health Department',
+      slug: 'demo',
     },
   });
 
-  console.log('Created tenant:', tenant.name);
+  console.log('✅ Created tenant:', demoTenant.name);
 
-  const hashedPassword = await bcrypt.hash('admin123', 10);
+  // Create admin user
+  const hashedAdminPassword = await bcrypt.hash('Admin123!', 10);
   const adminUser = await prisma.user.upsert({
-    where: { 
+    where: {
       tenantId_email: {
-        tenantId: tenant.id,
-        email: 'admin@demo.gov',
+        tenantId: demoTenant.id,
+        email: 'admin@demo.com'
       }
     },
     update: {},
     create: {
-      tenantId: tenant.id,
-      role: 'admin',
-      email: 'admin@demo.gov',
+      tenantId: demoTenant.id,
+      email: 'admin@demo.com',
+      password: hashedAdminPassword,
       name: 'Admin User',
-      password: hashedPassword,
+      role: 'admin',
       isActive: true,
     },
   });
 
-  console.log('Created admin user:', adminUser.email);
+  console.log('✅ Created admin user:', adminUser.email);
 
-  const caseWorkerPassword = await bcrypt.hash('caseworker123', 10);
+  // Create case worker
+  const hashedWorkerPassword = await bcrypt.hash('Worker123!', 10);
   const caseWorker = await prisma.user.upsert({
-    where: { 
+    where: {
       tenantId_email: {
-        tenantId: tenant.id,
-        email: 'caseworker@demo.gov',
+        tenantId: demoTenant.id,
+        email: 'worker@demo.com'
       }
     },
     update: {},
     create: {
-      tenantId: tenant.id,
-      role: 'case_worker',
-      email: 'caseworker@demo.gov',
+      tenantId: demoTenant.id,
+      email: 'worker@demo.com',
+      password: hashedWorkerPassword,
       name: 'Case Worker',
-      password: caseWorkerPassword,
+      role: 'case_worker',
       isActive: true,
     },
   });
 
-  console.log('Created case worker user:', caseWorker.email);
+  console.log('✅ Created case worker:', caseWorker.email);
 
-  const beneficiaries = [
-    {
-      medicaidId: 'MED001',
+  // Create sample beneficiaries
+  await prisma.beneficiary.upsert({
+    where: {
+      tenantId_medicaidId: {
+        tenantId: demoTenant.id,
+        medicaidId: 'MCD-001-2024'
+      }
+    },
+    update: {},
+    create: {
+      tenantId: demoTenant.id,
+      medicaidId: 'MCD-001-2024',
       firstName: 'John',
-      lastName: 'Smith',
-      dateOfBirth: '1985-03-15',
-      phone: '555-0101',
-      email: 'john.smith@example.com',
-      engagementStatus: 'active',
-    },
-    {
-      medicaidId: 'MED002',
-      firstName: 'Jane',
       lastName: 'Doe',
-      dateOfBirth: '1990-07-22',
-      phone: '555-0102',
-      email: 'jane.doe@example.com',
-      engagementStatus: 'active',
+      dateOfBirth: '1985-06-15',
+      email: 'john.doe@example.com',
+      phone: '555-0101',
+      engagementStatus: 'pending_verification',
     },
-    {
-      medicaidId: 'MED003',
+  });
+
+  await prisma.beneficiary.upsert({
+    where: {
+      tenantId_medicaidId: {
+        tenantId: demoTenant.id,
+        medicaidId: 'MCD-002-2024'
+      }
+    },
+    update: {},
+    create: {
+      tenantId: demoTenant.id,
+      medicaidId: 'MCD-002-2024',
+      firstName: 'Jane',
+      lastName: 'Smith',
+      dateOfBirth: '1990-03-22',
+      email: 'jane.smith@example.com',
+      phone: '555-0102',
+      engagementStatus: 'verified',
+    },
+  });
+
+  await prisma.beneficiary.upsert({
+    where: {
+      tenantId_medicaidId: {
+        tenantId: demoTenant.id,
+        medicaidId: 'MCD-003-2024'
+      }
+    },
+    update: {},
+    create: {
+      tenantId: demoTenant.id,
+      medicaidId: 'MCD-003-2024',
       firstName: 'Robert',
       lastName: 'Johnson',
       dateOfBirth: '1978-11-30',
-      phone: '555-0103',
       email: 'robert.johnson@example.com',
-      engagementStatus: 'non_compliant',
+      phone: '555-0103',
+      engagementStatus: 'not_engaged',
     },
-    {
-      medicaidId: 'MED004',
-      firstName: 'Maria',
-      lastName: 'Garcia',
-      dateOfBirth: '1995-05-18',
-      phone: '555-0104',
-      email: 'maria.garcia@example.com',
-      engagementStatus: 'exempt',
-    },
-    {
-      medicaidId: 'MED005',
-      firstName: 'Michael',
-      lastName: 'Williams',
-      dateOfBirth: '1982-09-08',
-      phone: '555-0105',
-      email: 'michael.williams@example.com',
-      engagementStatus: 'active',
-    },
-    {
-      medicaidId: 'MED006',
-      firstName: 'Sarah',
-      lastName: 'Brown',
-      dateOfBirth: '1988-12-25',
-      phone: '555-0106',
-      email: 'sarah.brown@example.com',
-      engagementStatus: 'unknown',
-    },
-    {
-      medicaidId: 'MED007',
-      firstName: 'David',
-      lastName: 'Martinez',
-      dateOfBirth: '1975-04-14',
-      phone: '555-0107',
-      email: 'david.martinez@example.com',
-      engagementStatus: 'active',
-    },
-    {
-      medicaidId: 'MED008',
-      firstName: 'Lisa',
-      lastName: 'Anderson',
-      dateOfBirth: '1992-08-03',
-      phone: '555-0108',
-      email: 'lisa.anderson@example.com',
-      engagementStatus: 'non_compliant',
-    },
-  ];
+  });
 
-  for (const beneficiary of beneficiaries) {
-    await prisma.beneficiary.upsert({
-      where: {
-        tenantId_medicaidId: {
-          tenantId: tenant.id,
-          medicaidId: beneficiary.medicaidId,
-        },
-      },
-      update: {},
-      create: {
-        ...beneficiary,
-        tenantId: tenant.id,
-      },
-    });
-  }
+  console.log('✅ Created 3 sample beneficiaries');
 
-  console.log(`Created ${beneficiaries.length} beneficiaries`);
-  console.log('Database seed completed successfully!');
+  console.log('\n' + '='.repeat(60));
+  console.log('📋 DEMO CREDENTIALS');
+  console.log('='.repeat(60));
+  console.log('\n🔑 Admin Login:');
+  console.log('   Email:    admin@demo.com');
+  console.log('   Password: Admin123!');
+  console.log('\n🔑 Case Worker Login:');
+  console.log('   Email:    worker@demo.com');
+  console.log('   Password: Worker123!');
+  console.log('\n📊 Sample Data:');
+  console.log('   Tenants:       1');
+  console.log('   Users:         2');
+  console.log('   Beneficiaries: 3');
+  console.log('\n' + '='.repeat(60));
+  console.log('🎉 Seed completed successfully!');
+  console.log('='.repeat(60) + '\n');
 }
 
 main()
   .catch((e) => {
-    console.error('Error seeding database:', e);
+    console.error('❌ Seed failed:', e);
     process.exit(1);
   })
   .finally(async () => {
