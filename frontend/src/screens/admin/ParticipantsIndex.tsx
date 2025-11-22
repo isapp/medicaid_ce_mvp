@@ -8,6 +8,7 @@ import { Button } from '../../components/ui/Button';
 import { Search, Filter } from 'lucide-react';
 import { StatusBadge, StatusType } from '../../components/admin/StatusBadge';
 import { beneficiariesService } from '../../api/services/beneficiaries';
+import { StatsCard } from '../../components/ui/StatsCard';
 
 const mapEngagementStatusToStatusBadge = (engagementStatus: string): StatusType => {
   switch (engagementStatus) {
@@ -41,12 +42,44 @@ export const ParticipantsIndex: React.FC = () => {
     queryFn: () => beneficiariesService.list({ search: debouncedSearch || undefined }),
   });
 
+  const totalCount = data?.total || 0;
+  const verifiedCount = data?.items.filter(b => b.engagementStatus === 'active').length || 0;
+  const pendingCount = data?.items.filter(b => b.engagementStatus === 'unknown').length || 0;
+  const atRiskCount = data?.items.filter(b => b.engagementStatus === 'non_compliant').length || 0;
+
   return (
     <AdminShell>
       <div className="participants-index">
         <div className="page-header">
           <h1>Participants</h1>
           <p>Manage and monitor participant engagement</p>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" style={{ marginBottom: '2rem' }}>
+          <StatsCard
+            title="Total Participants"
+            value={totalCount}
+            subtitle="All time"
+          />
+          <StatsCard
+            title="Verified"
+            value={verifiedCount}
+            subtitle="Compliant"
+            subtitleClassName="text-success"
+          />
+          <StatsCard
+            title="Pending Review"
+            value={pendingCount}
+            subtitle="Needs attention"
+            subtitleClassName="text-warning"
+          />
+          <StatsCard
+            title="At Risk"
+            value={atRiskCount}
+            subtitle="Non-compliant"
+            subtitleClassName="text-destructive"
+          />
         </div>
 
         <Card className="participants-filters">

@@ -5,6 +5,7 @@ import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Plus } from 'lucide-react';
 import { StatusBadge } from '../../components/admin/StatusBadge';
+import { StatsCard } from '../../components/ui/StatsCard';
 
 export const BroadcastsIndex: React.FC = () => {
   const navigate = useNavigate();
@@ -14,6 +15,11 @@ export const BroadcastsIndex: React.FC = () => {
     { id: '2', title: 'Deadline Extension Notice', recipients: 156, status: 'scheduled', sentAt: 'Tomorrow at 9:00 AM' },
     { id: '3', title: 'New Requirements Update', recipients: 1234, status: 'draft', sentAt: 'Not sent' },
   ];
+
+  const totalCampaigns = mockBroadcasts.length;
+  const sentCount = mockBroadcasts.filter(b => b.status === 'sent').length;
+  const totalRecipients = mockBroadcasts.reduce((sum, b) => sum + b.recipients, 0);
+  const scheduledCount = mockBroadcasts.filter(b => b.status === 'scheduled').length;
 
   return (
     <AdminShell>
@@ -27,6 +33,32 @@ export const BroadcastsIndex: React.FC = () => {
             <Plus size={16} />
             <span>New Broadcast</span>
           </Button>
+        </div>
+
+        {/* Stats Cards */}
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6" style={{ marginBottom: '2rem' }}>
+          <StatsCard
+            title="Total Campaigns"
+            value={totalCampaigns}
+            subtitle="All time"
+          />
+          <StatsCard
+            title="Sent"
+            value={sentCount}
+            subtitle="Delivered"
+            subtitleClassName="text-success"
+          />
+          <StatsCard
+            title="Total Recipients"
+            value={totalRecipients}
+            subtitle="Messages sent"
+          />
+          <StatsCard
+            title="Scheduled"
+            value={scheduledCount}
+            subtitle="Upcoming"
+            subtitleClassName="text-warning"
+          />
         </div>
 
         <Card className="broadcasts-table">
