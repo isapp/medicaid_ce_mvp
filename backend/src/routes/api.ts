@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { authRouter } from '../modules/auth/auth.routes';
 import { beneficiariesRouter } from '../modules/beneficiaries/beneficiaries.routes';
 import { engagementsRouter } from '../modules/engagement/engagement.routes';
+import { webhooksRouter } from './webhooks';
 
 export const apiRouter = Router();
 
@@ -18,3 +19,4 @@ apiRouter.get('/health', (_req, res) => {
 apiRouter.use('/auth', authRouter);
 apiRouter.use('/beneficiaries', beneficiariesRouter);
 apiRouter.use('/engagements', engagementsRouter);
+apiRouter.use('/webhooks', webhooksRouter);
