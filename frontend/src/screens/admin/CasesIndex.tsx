@@ -4,7 +4,9 @@ import { AdminShell } from '../../components/layout/AdminShell';
 import { Card } from '../../components/ui/Card';
 import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
+import { Briefcase } from 'lucide-react';
 import { StatsCard } from '../../components/ui/StatsCard';
+import { EmptyState } from '../../components/ui/EmptyState';
 
 export const CasesIndex: React.FC = () => {
   const navigate = useNavigate();
@@ -55,44 +57,52 @@ export const CasesIndex: React.FC = () => {
         </div>
 
         <Card className="cases-table">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Case ID</th>
-                <th>Participant</th>
-                <th>Type</th>
-                <th>Status</th>
-                <th>Priority</th>
-                <th>Created</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {mockCases.map((caseItem) => (
-                <tr key={caseItem.id}>
-                  <td>#{caseItem.id}</td>
-                  <td>{caseItem.participant}</td>
-                  <td>{caseItem.type}</td>
-                  <td>
-                    <Badge variant={caseItem.status === 'open' ? 'warning' : 'default'}>
-                      {caseItem.status}
-                    </Badge>
-                  </td>
-                  <td>
-                    <Badge variant={caseItem.priority === 'high' ? 'destructive' : caseItem.priority === 'medium' ? 'warning' : 'default'}>
-                      {caseItem.priority}
-                    </Badge>
-                  </td>
-                  <td>{caseItem.created}</td>
-                  <td>
-                    <Button variant="secondary" onClick={() => navigate(`/admin/cases/${caseItem.id}`)}>
-                      View
-                    </Button>
-                  </td>
+          {mockCases.length === 0 ? (
+            <EmptyState
+              icon={Briefcase}
+              title="No cases found"
+              description="Cases will appear here when participants need assistance or have issues to resolve"
+            />
+          ) : (
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Case ID</th>
+                  <th>Participant</th>
+                  <th>Type</th>
+                  <th>Status</th>
+                  <th>Priority</th>
+                  <th>Created</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {mockCases.map((caseItem) => (
+                  <tr key={caseItem.id}>
+                    <td>#{caseItem.id}</td>
+                    <td>{caseItem.participant}</td>
+                    <td>{caseItem.type}</td>
+                    <td>
+                      <Badge variant={caseItem.status === 'open' ? 'warning' : 'default'}>
+                        {caseItem.status}
+                      </Badge>
+                    </td>
+                    <td>
+                      <Badge variant={caseItem.priority === 'high' ? 'destructive' : caseItem.priority === 'medium' ? 'warning' : 'default'}>
+                        {caseItem.priority}
+                      </Badge>
+                    </td>
+                    <td>{caseItem.created}</td>
+                    <td>
+                      <Button variant="secondary" onClick={() => navigate(`/admin/cases/${caseItem.id}`)}>
+                        View
+                      </Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </Card>
       </div>
     </AdminShell>

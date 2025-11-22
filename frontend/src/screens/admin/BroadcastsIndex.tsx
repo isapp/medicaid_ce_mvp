@@ -3,9 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import { AdminShell } from '../../components/layout/AdminShell';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
-import { Plus } from 'lucide-react';
+import { Plus, MessageSquare } from 'lucide-react';
 import { StatusBadge } from '../../components/admin/StatusBadge';
 import { StatsCard } from '../../components/ui/StatsCard';
+import { EmptyState } from '../../components/ui/EmptyState';
 
 export const BroadcastsIndex: React.FC = () => {
   const navigate = useNavigate();
@@ -62,32 +63,44 @@ export const BroadcastsIndex: React.FC = () => {
         </div>
 
         <Card className="broadcasts-table">
-          <table className="data-table">
-            <thead>
-              <tr>
-                <th>Title</th>
-                <th>Recipients</th>
-                <th>Status</th>
-                <th>Sent At</th>
-                <th>Actions</th>
-              </tr>
-            </thead>
-            <tbody>
-              {mockBroadcasts.map((broadcast) => (
-                <tr key={broadcast.id}>
-                  <td>{broadcast.title}</td>
-                  <td>{broadcast.recipients}</td>
-                  <td>
-                    <StatusBadge status={broadcast.status as any} />
-                  </td>
-                  <td>{broadcast.sentAt}</td>
-                  <td>
-                    <Button variant="secondary">View</Button>
-                  </td>
+          {mockBroadcasts.length === 0 ? (
+            <EmptyState
+              icon={MessageSquare}
+              title="No broadcasts yet"
+              description="Create your first broadcast campaign to send messages to participants"
+              action={{
+                label: "Create Broadcast",
+                onClick: () => navigate('/admin/broadcasts/new')
+              }}
+            />
+          ) : (
+            <table className="data-table">
+              <thead>
+                <tr>
+                  <th>Title</th>
+                  <th>Recipients</th>
+                  <th>Status</th>
+                  <th>Sent At</th>
+                  <th>Actions</th>
                 </tr>
-              ))}
-            </tbody>
-          </table>
+              </thead>
+              <tbody>
+                {mockBroadcasts.map((broadcast) => (
+                  <tr key={broadcast.id}>
+                    <td>{broadcast.title}</td>
+                    <td>{broadcast.recipients}</td>
+                    <td>
+                      <StatusBadge status={broadcast.status as any} />
+                    </td>
+                    <td>{broadcast.sentAt}</td>
+                    <td>
+                      <Button variant="secondary">View</Button>
+                    </td>
+                  </tr>
+                ))}
+              </tbody>
+            </table>
+          )}
         </Card>
       </div>
     </AdminShell>
