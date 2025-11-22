@@ -5,10 +5,11 @@ import { AdminShell } from '../../components/layout/AdminShell';
 import { Card } from '../../components/ui/Card';
 import { Input } from '../../components/ui/Input';
 import { Button } from '../../components/ui/Button';
-import { Search, Filter } from 'lucide-react';
+import { Search, Filter, Users } from 'lucide-react';
 import { StatusBadge, StatusType } from '../../components/admin/StatusBadge';
 import { beneficiariesService } from '../../api/services/beneficiaries';
 import { StatsCard } from '../../components/ui/StatsCard';
+import { EmptyState } from '../../components/ui/EmptyState';
 import { StarButton } from '../../components/admin/StarButton';
 
 const mapEngagementStatusToStatusBadge = (engagementStatus: string): StatusType => {
@@ -129,6 +130,22 @@ export const ParticipantsIndex: React.FC = () => {
           
           {data && (
             <>
+              {data.items.length === 0 ? (
+                <EmptyState
+                  icon={Users}
+                  title="No participants found"
+                  description={searchQuery ? "Try adjusting your search criteria" : "Get started by adding your first participant"}
+                />
+              ) : (
+                <>
+                  <table className="data-table">
+                    <thead>
+                      <tr>
+                        <th>Name</th>
+                        <th>Medicaid ID</th>
+                        <th>Status</th>
+                        <th>Phone</th>
+                        <th>Actions</th>
               <table className="data-table">
                 <thead>
                   <tr>
@@ -168,14 +185,31 @@ export const ParticipantsIndex: React.FC = () => {
                           </Button>
                         </td>
                       </tr>
-                    ))
+                    </thead>
+                    <tbody>
+                      {data.items.map((beneficiary) => (
+                        <tr key={beneficiary.id}>
+                          <td>{beneficiary.firstName} {beneficiary.lastName}</td>
+                          <td>{beneficiary.medicaidId}</td>
+                          <td>
+                            <StatusBadge status={mapEngagementStatusToStatusBadge(beneficiary.engagementStatus)} />
+                          </td>
+                          <td>{beneficiary.phone || 'N/A'}</td>
+                          <td>
+                            <Button variant="secondary" onClick={() => navigate(`/admin/participants/${beneficiary.id}`)}>
+                              View
+                            </Button>
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                  {data.total > 0 && (
+                    <div style={{ padding: '1rem', textAlign: 'center', borderTop: '1px solid var(--color-border)' }}>
+                      Showing {data.items.length} of {data.total} participants
+                    </div>
                   )}
-                </tbody>
-              </table>
-              {data.total > 0 && (
-                <div style={{ padding: '1rem', textAlign: 'center', borderTop: '1px solid var(--color-border)' }}>
-                  Showing {data.items.length} of {data.total} participants
-                </div>
+                </>
               )}
             </>
           )}

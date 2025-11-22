@@ -3,8 +3,9 @@ import { AdminShell } from '../../components/layout/AdminShell';
 import { Card } from '../../components/ui/Card';
 import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
-import { MapPin, Phone, Mail, Users } from 'lucide-react';
+import { MapPin, Phone, Mail, Users, Building } from 'lucide-react';
 import { StatsCard } from '../../components/ui/StatsCard';
+import { EmptyState } from '../../components/ui/EmptyState';
 import { StarButton } from '../../components/admin/StarButton';
 
 export const VolunteerNetworkScreen: React.FC = () => {
@@ -99,13 +100,28 @@ export const VolunteerNetworkScreen: React.FC = () => {
           />
         </div>
 
-        <div className="volunteer-network-grid">
-          {mockOrganizations.map((org) => (
-            <Card key={org.id} className="volunteer-org-card">
-              <div className="org-header">
-                <div>
-                  <h3>{org.name}</h3>
-                  <Badge variant="default">{org.type}</Badge>
+        {mockOrganizations.length === 0 ? (
+          <Card>
+            <EmptyState
+              icon={Building}
+              title="No organizations yet"
+              description="Add community service organizations to build your volunteer network"
+              action={{
+                label: "Add Organization",
+                onClick: () => {}
+              }}
+            />
+          </Card>
+        ) : (
+          <div className="volunteer-network-grid">
+            {mockOrganizations.map((org) => (
+              <Card key={org.id} className="volunteer-org-card">
+                <div className="org-header">
+                  <div>
+                    <h3>{org.name}</h3>
+                    <Badge variant="default">{org.type}</Badge>
+                  </div>
+                  <Badge variant="success">{org.status}</Badge>
                 </div>
                 <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
                   <StarButton
@@ -116,35 +132,36 @@ export const VolunteerNetworkScreen: React.FC = () => {
                 </div>
               </div>
 
-              <div className="org-details">
-                <div className="org-detail-item">
-                  <MapPin size={16} />
-                  <span>{org.location}</span>
+                <div className="org-details">
+                  <div className="org-detail-item">
+                    <MapPin size={16} />
+                    <span>{org.location}</span>
+                  </div>
+                  <div className="org-detail-item">
+                    <Phone size={16} />
+                    <span>{org.contact}</span>
+                  </div>
+                  <div className="org-detail-item">
+                    <Mail size={16} />
+                    <span>{org.email}</span>
+                  </div>
                 </div>
-                <div className="org-detail-item">
-                  <Phone size={16} />
-                  <span>{org.contact}</span>
-                </div>
-                <div className="org-detail-item">
-                  <Mail size={16} />
-                  <span>{org.email}</span>
-                </div>
-              </div>
 
-              <div className="org-stats">
-                <div className="org-stat">
-                  <div className="stat-value">{org.activeParticipants}</div>
-                  <div className="stat-label">Active Participants</div>
+                <div className="org-stats">
+                  <div className="org-stat">
+                    <div className="stat-value">{org.activeParticipants}</div>
+                    <div className="stat-label">Active Participants</div>
+                  </div>
                 </div>
-              </div>
 
-              <div className="org-actions">
-                <Button variant="secondary">View Details</Button>
-                <Button variant="secondary">Contact</Button>
-              </div>
-            </Card>
-          ))}
-        </div>
+                <div className="org-actions">
+                  <Button variant="secondary">View Details</Button>
+                  <Button variant="secondary">Contact</Button>
+                </div>
+              </Card>
+            ))}
+          </div>
+        )}
       </div>
     </AdminShell>
   );
