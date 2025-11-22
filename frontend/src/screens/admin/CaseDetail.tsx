@@ -6,11 +6,13 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { ArrowLeft, User, Clock, AlertCircle } from 'lucide-react';
 import { StatusBadge } from '../../components/admin/StatusBadge';
+import { StarButton } from '../../components/admin/StarButton';
 import { AddNoteModal } from '../../components/admin/AddNoteModal';
 
 export const CaseDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [isStarred, setIsStarred] = React.useState(false);
   const [isAddNoteModalOpen, setIsAddNoteModalOpen] = React.useState(false);
 
   const mockCase = {
@@ -51,6 +53,9 @@ export const CaseDetail: React.FC = () => {
             <ArrowLeft size={16} />
             <span>Back to Cases</span>
           </Button>
+          <div className="detail-header-actions">
+            <StarButton isStarred={isStarred} onToggle={() => setIsStarred(!isStarred)} />
+          </div>
         </div>
 
         <div className="detail-content">
