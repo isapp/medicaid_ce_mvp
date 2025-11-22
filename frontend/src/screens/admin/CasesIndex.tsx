@@ -7,9 +7,11 @@ import { Button } from '../../components/ui/Button';
 import { Briefcase } from 'lucide-react';
 import { StatsCard } from '../../components/ui/StatsCard';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { StarButton } from '../../components/admin/StarButton';
 
 export const CasesIndex: React.FC = () => {
   const navigate = useNavigate();
+  const [starredIds, setStarredIds] = React.useState<Set<string>>(new Set());
   
   const mockCases = [
     { id: '1', participant: 'John Doe', type: 'Verification Issue', status: 'open', priority: 'high', created: '2 days ago' },
@@ -21,6 +23,18 @@ export const CasesIndex: React.FC = () => {
   const inReviewCount = mockCases.filter(c => c.status === 'in-progress').length;
   const openCount = mockCases.filter(c => c.status === 'open').length;
   const highPriorityCount = mockCases.filter(c => c.priority === 'high').length;
+
+  const toggleStar = (id: string) => {
+    setStarredIds(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
 
   return (
     <AdminShell>
@@ -74,6 +88,47 @@ export const CasesIndex: React.FC = () => {
                   <th>Priority</th>
                   <th>Created</th>
                   <th>Actions</th>
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Case ID</th>
+                <th>Participant</th>
+                <th>Type</th>
+                <th>Status</th>
+                <th>Priority</th>
+                <th>Created</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {mockCases.map((caseItem) => (
+                <tr key={caseItem.id}>
+                  <td>
+                    <StarButton
+                      isStarred={starredIds.has(caseItem.id)}
+                      onToggle={() => toggleStar(caseItem.id)}
+                    />
+                  </td>
+                  <td>#{caseItem.id}</td>
+                  <td>{caseItem.participant}</td>
+                  <td>{caseItem.type}</td>
+                  <td>
+                    <Badge variant={caseItem.status === 'open' ? 'warning' : 'default'}>
+                      {caseItem.status}
+                    </Badge>
+                  </td>
+                  <td>
+                    <Badge variant={caseItem.priority === 'high' ? 'destructive' : caseItem.priority === 'medium' ? 'warning' : 'default'}>
+                      {caseItem.priority}
+                    </Badge>
+                  </td>
+                  <td>{caseItem.created}</td>
+                  <td>
+                    <Button variant="secondary" onClick={() => navigate(`/admin/cases/${caseItem.id}`)}>
+                      View
+                    </Button>
+                  </td>
                 </tr>
               </thead>
               <tbody>

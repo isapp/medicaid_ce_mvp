@@ -7,9 +7,11 @@ import { Plus, MessageSquare } from 'lucide-react';
 import { StatusBadge } from '../../components/admin/StatusBadge';
 import { StatsCard } from '../../components/ui/StatsCard';
 import { EmptyState } from '../../components/ui/EmptyState';
+import { StarButton } from '../../components/admin/StarButton';
 
 export const BroadcastsIndex: React.FC = () => {
   const navigate = useNavigate();
+  const [starredIds, setStarredIds] = React.useState<Set<string>>(new Set());
 
   const mockBroadcasts = [
     { id: '1', title: 'Monthly Reminder', recipients: 1234, status: 'sent', sentAt: '2 days ago' },
@@ -21,6 +23,18 @@ export const BroadcastsIndex: React.FC = () => {
   const sentCount = mockBroadcasts.filter(b => b.status === 'sent').length;
   const totalRecipients = mockBroadcasts.reduce((sum, b) => sum + b.recipients, 0);
   const scheduledCount = mockBroadcasts.filter(b => b.status === 'scheduled').length;
+
+  const toggleStar = (id: string) => {
+    setStarredIds(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
 
   return (
     <AdminShell>
@@ -82,6 +96,35 @@ export const BroadcastsIndex: React.FC = () => {
                   <th>Status</th>
                   <th>Sent At</th>
                   <th>Actions</th>
+          <table className="data-table">
+            <thead>
+              <tr>
+                <th></th>
+                <th>Title</th>
+                <th>Recipients</th>
+                <th>Status</th>
+                <th>Sent At</th>
+                <th>Actions</th>
+              </tr>
+            </thead>
+            <tbody>
+              {mockBroadcasts.map((broadcast) => (
+                <tr key={broadcast.id}>
+                  <td>
+                    <StarButton
+                      isStarred={starredIds.has(broadcast.id)}
+                      onToggle={() => toggleStar(broadcast.id)}
+                    />
+                  </td>
+                  <td>{broadcast.title}</td>
+                  <td>{broadcast.recipients}</td>
+                  <td>
+                    <StatusBadge status={broadcast.status as any} />
+                  </td>
+                  <td>{broadcast.sentAt}</td>
+                  <td>
+                    <Button variant="secondary">View</Button>
+                  </td>
                 </tr>
               </thead>
               <tbody>
