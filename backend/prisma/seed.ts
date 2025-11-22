@@ -78,7 +78,7 @@ async function main() {
       lastName: 'Doe',
       dateOfBirth: '1985-06-15',
       email: 'john.doe@example.com',
-      phone: '555-0101',
+      phone: '555-555-0101',
       engagementStatus: 'pending_verification',
     },
   });
@@ -98,7 +98,7 @@ async function main() {
       lastName: 'Smith',
       dateOfBirth: '1990-03-22',
       email: 'jane.smith@example.com',
-      phone: '555-0102',
+      phone: '555-555-0102',
       engagementStatus: 'verified',
     },
   });
@@ -118,7 +118,7 @@ async function main() {
       lastName: 'Johnson',
       dateOfBirth: '1978-11-30',
       email: 'robert.johnson@example.com',
-      phone: '555-0103',
+      phone: '555-555-0103',
       engagementStatus: 'not_engaged',
     },
   });
@@ -128,12 +128,17 @@ async function main() {
   console.log('\n' + '='.repeat(60));
   console.log('📋 DEMO CREDENTIALS');
   console.log('='.repeat(60));
-  console.log('\n🔑 Admin Login:');
+  console.log('\n🔑 Admin Portal Login:');
   console.log('   Email:    admin@demo.com');
   console.log('   Password: Admin123!');
   console.log('\n🔑 Case Worker Login:');
   console.log('   Email:    worker@demo.com');
   console.log('   Password: Worker123!');
+  console.log('\n📱 Member Portal Login:');
+  console.log('   Phone:    555-555-0101 (John Doe)');
+  console.log('   Phone:    555-555-0102 (Jane Smith)');
+  console.log('   Phone:    555-555-0103 (Robert Johnson)');
+  console.log('   Code:     123456 (for all members)');
   console.log('\n📊 Sample Data:');
   console.log('   Tenants:       1');
   console.log('   Users:         2');

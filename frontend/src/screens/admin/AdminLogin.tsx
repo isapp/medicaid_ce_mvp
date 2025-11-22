@@ -96,7 +96,7 @@ export const AdminLogin: React.FC = () => {
 
         <div className="login-footer">
           <p className="demo-notice">
-            Demo credentials: admin@demo.gov / admin123
+            Demo credentials: admin@demo.com / Admin123!
           </p>
         </div>
       </Card>

@@ -4,7 +4,8 @@ import { config } from './config';
 export interface JWTPayload {
   userId: string;
   tenantId: string;
-  email: string;
+  email?: string;
+  phoneNumber?: string;
   role: string;
 }
 
