@@ -19,19 +19,20 @@ model Tenant {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
-  users         User[]
-  beneficiaries Beneficiary[]
+  users                User[]
+  beneficiaries        Beneficiary[]
+  employmentActivities EmploymentActivity[]
 }
 
 // User model for admin and case workers
 model User {
   id        String   @id @default(uuid())
   tenantId  String
-  role      String   // 'admin', 'case_worker', 'member'
+  role      String // 'admin', 'case_worker', 'member'
   email     String?
   phone     String?
   name      String
-  password  String?  // hashed password for admin/case_worker
+  password  String? // hashed password for admin/case_worker
   isActive  Boolean  @default(true)
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -56,9 +57,39 @@ model Beneficiary {
   createdAt        DateTime @default(now())
   updatedAt        DateTime @updatedAt
 
-  tenant Tenant @relation(fields: [tenantId], references: [id])
+  tenant               Tenant               @relation(fields: [tenantId], references: [id])
+  employmentActivities EmploymentActivity[]
 
   @@unique([tenantId, medicaidId])
   @@index([tenantId])
   @@index([tenantId, engagementStatus])
+}
+
+// Employment Activity model for tracking work activities
+model EmploymentActivity {
+  id                 String  @id @default(uuid())
+  tenantId           String
+  beneficiaryId      String
+  employerName       String
+  hoursWorked        Float
+  activityDate       String // YYYY-MM-DD format
+  verificationStatus String  @default("pending") // 'pending', 'verified', 'failed'
+  verificationMethod String? // 'gig', 'payroll', 'bank', 'manual'
+  provider           String? // e.g., 'iv-cbv-payroll', 'manual'
+
+  // CBV Integration fields
+  externalVerificationId String? // CbvFlow.id from iv-cbv-payroll
+  verificationUrl        String? // Tokenized URL for member to complete verification
+  verificationData       Json? // Full webhook payload from verification provider
+  webhookReceivedAt      DateTime? // When webhook was received
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  tenant      Tenant      @relation(fields: [tenantId], references: [id])
+  beneficiary Beneficiary @relation(fields: [beneficiaryId], references: [id])
+
+  @@index([tenantId])
+  @@index([beneficiaryId])
+  @@index([tenantId, verificationStatus])
 }
