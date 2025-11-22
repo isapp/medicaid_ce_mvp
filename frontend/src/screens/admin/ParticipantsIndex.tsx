@@ -9,6 +9,7 @@ import { Search, Filter } from 'lucide-react';
 import { StatusBadge, StatusType } from '../../components/admin/StatusBadge';
 import { beneficiariesService } from '../../api/services/beneficiaries';
 import { StatsCard } from '../../components/ui/StatsCard';
+import { StarButton } from '../../components/admin/StarButton';
 
 const mapEngagementStatusToStatusBadge = (engagementStatus: string): StatusType => {
   switch (engagementStatus) {
@@ -29,6 +30,7 @@ export const ParticipantsIndex: React.FC = () => {
   const navigate = useNavigate();
   const [searchQuery, setSearchQuery] = React.useState('');
   const [debouncedSearch, setDebouncedSearch] = React.useState('');
+  const [starredIds, setStarredIds] = React.useState<Set<string>>(new Set());
 
   React.useEffect(() => {
     const timer = setTimeout(() => {
@@ -46,6 +48,18 @@ export const ParticipantsIndex: React.FC = () => {
   const verifiedCount = data?.items.filter(b => b.engagementStatus === 'active').length || 0;
   const pendingCount = data?.items.filter(b => b.engagementStatus === 'unknown').length || 0;
   const atRiskCount = data?.items.filter(b => b.engagementStatus === 'non_compliant').length || 0;
+
+  const toggleStar = (id: string) => {
+    setStarredIds(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
 
   return (
     <AdminShell>
@@ -118,6 +132,7 @@ export const ParticipantsIndex: React.FC = () => {
               <table className="data-table">
                 <thead>
                   <tr>
+                    <th></th>
                     <th>Name</th>
                     <th>Medicaid ID</th>
                     <th>Status</th>
@@ -128,13 +143,19 @@ export const ParticipantsIndex: React.FC = () => {
                 <tbody>
                   {data.items.length === 0 ? (
                     <tr>
-                      <td colSpan={5} style={{ textAlign: 'center', padding: '2rem' }}>
+                      <td colSpan={6} style={{ textAlign: 'center', padding: '2rem' }}>
                         No participants found
                       </td>
                     </tr>
                   ) : (
                     data.items.map((beneficiary) => (
                       <tr key={beneficiary.id}>
+                        <td>
+                          <StarButton
+                            isStarred={starredIds.has(beneficiary.id)}
+                            onToggle={() => toggleStar(beneficiary.id)}
+                          />
+                        </td>
                         <td>{beneficiary.firstName} {beneficiary.lastName}</td>
                         <td>{beneficiary.medicaidId}</td>
                         <td>

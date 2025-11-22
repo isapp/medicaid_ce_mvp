@@ -5,8 +5,11 @@ import { Button } from '../../components/ui/Button';
 import { Badge } from '../../components/ui/Badge';
 import { MapPin, Phone, Mail, Users } from 'lucide-react';
 import { StatsCard } from '../../components/ui/StatsCard';
+import { StarButton } from '../../components/admin/StarButton';
 
 export const VolunteerNetworkScreen: React.FC = () => {
+  const [starredIds, setStarredIds] = React.useState<Set<string>>(new Set());
+
   const mockOrganizations = [
     {
       id: '1',
@@ -44,6 +47,18 @@ export const VolunteerNetworkScreen: React.FC = () => {
   const activeOrganizations = mockOrganizations.filter(o => o.status === 'active').length;
   const totalParticipants = mockOrganizations.reduce((sum, o) => sum + o.activeParticipants, 0);
   const avgParticipants = totalOrganizations > 0 ? Math.round(totalParticipants / totalOrganizations) : 0;
+
+  const toggleStar = (id: string) => {
+    setStarredIds(prev => {
+      const newSet = new Set(prev);
+      if (newSet.has(id)) {
+        newSet.delete(id);
+      } else {
+        newSet.add(id);
+      }
+      return newSet;
+    });
+  };
 
   return (
     <AdminShell>
@@ -92,7 +107,13 @@ export const VolunteerNetworkScreen: React.FC = () => {
                   <h3>{org.name}</h3>
                   <Badge variant="default">{org.type}</Badge>
                 </div>
-                <Badge variant="success">{org.status}</Badge>
+                <div style={{ display: 'flex', gap: '0.5rem', alignItems: 'center' }}>
+                  <StarButton
+                    isStarred={starredIds.has(org.id)}
+                    onToggle={() => toggleStar(org.id)}
+                  />
+                  <Badge variant="success">{org.status}</Badge>
+                </div>
               </div>
 
               <div className="org-details">

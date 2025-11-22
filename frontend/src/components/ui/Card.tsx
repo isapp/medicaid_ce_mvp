@@ -8,3 +8,11 @@ interface CardProps {
 export const Card: React.FC<CardProps> = ({ children, className = '' }) => {
   return <div className={`card ${className}`}>{children}</div>;
 };
+
+export const CardHeader: React.FC<CardProps> = ({ children, className = '' }) => {
+  return <div className={`card-header ${className}`}>{children}</div>;
+};
+
+export const CardContent: React.FC<CardProps> = ({ children, className = '' }) => {
+  return <div className={`card-content ${className}`}>{children}</div>;
+};

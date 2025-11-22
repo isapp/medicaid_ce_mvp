@@ -6,12 +6,14 @@ import { Badge } from '../../components/ui/Badge';
 import { Button } from '../../components/ui/Button';
 import { ArrowLeft, User, Clock, AlertCircle } from 'lucide-react';
 import { StatusBadge } from '../../components/admin/StatusBadge';
+import { StarButton } from '../../components/admin/StarButton';
 import { AddNoteModal } from '../../components/admin/AddNoteModal';
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '../../components/ui/Tabs';
 
 export const CaseDetail: React.FC = () => {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const [isStarred, setIsStarred] = React.useState(false);
   const [isAddNoteModalOpen, setIsAddNoteModalOpen] = React.useState(false);
   const [activeTab, setActiveTab] = React.useState<'overview' | 'activity' | 'documents'>('overview');
 
@@ -87,6 +89,7 @@ export const CaseDetail: React.FC = () => {
 
             {/* Action Buttons */}
             <div className="flex gap-2">
+              <StarButton isStarred={isStarred} onToggle={() => setIsStarred(!isStarred)} />
               <Button variant="secondary">Assign</Button>
               <Button variant="primary">Resolve</Button>
             </div>

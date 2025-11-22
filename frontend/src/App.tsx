@@ -20,6 +20,7 @@ import { VolunteerNetworkScreen } from './screens/admin/VolunteerNetworkScreen';
 import { MemberAuth } from './screens/member/MemberAuth';
 import { MemberAuthVerify } from './screens/member/MemberAuthVerify';
 import { MemberDashboard } from './screens/member/MemberDashboard';
+import { MemberEmployment } from './screens/member/MemberEmployment';
 
 const RequireAuth: React.FC<{ children: React.ReactNode }> = ({ children }) => {
   const { isAuthenticated, isLoading } = useAuth();
@@ -146,13 +147,13 @@ const AppContent: React.FC = () => {
           </RequireAuth>
         } 
       />
-      <Route 
-        path="/m/work" 
+      <Route
+        path="/m/work"
         element={
           <RequireAuth>
-            <div className="screen"><h1>Employment Verification</h1></div>
+            <MemberEmployment />
           </RequireAuth>
-        } 
+        }
       />
       <Route 
         path="/m/education" 
