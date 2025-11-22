@@ -5,8 +5,8 @@ FROM node:20-alpine AS builder
 
 WORKDIR /app
 
-# Build argument for API URL
-ARG VITE_API_BASE_URL=http://localhost:4000/api/v1
+# Build argument for API URL - use relative path for nginx proxy
+ARG VITE_API_BASE_URL=/api/v1
 ENV VITE_API_BASE_URL=$VITE_API_BASE_URL
 
 # Copy package files
